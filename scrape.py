@@ -3,7 +3,7 @@
 # Call https://en.wikipedia.org/wiki/Special:Random to get the redirect page
 # and then scrape https://en.wikipedia.org/w/index.php?title=${title}&action=edit
 # Extract data in textarea with id:wpTextbox1
-# save the data in a file ./data/${title}.txt
+# save the data in a file ./data/${title}.wiki
 
 import requests
 from bs4 import BeautifulSoup
@@ -29,19 +29,16 @@ def get_random_page_path():
 
     return path
 
-def get_page_content(title):
-    url = f"https://en.wikipedia.org/w/index.php?title={title}&action=edit"
+def get_page_content(path):
+    url = f"https://en.wikipedia.org/w/index.php?title={path}&action=edit"
     response = requests.get(url)
-
-    for key, value in response.headers.items():
-        print(f"{key}: {value}")
-
     soup = BeautifulSoup(response.text, 'html.parser')
     textarea = soup.find('textarea', {'id': 'wpTextbox1'})
     return textarea.text
 
-def save_page_content(title, content):
-    with open(f"./data/{title}.txt", 'w') as f:
+
+def save_page_content(path, content):
+    with open(f"./data/{path}.wiki", 'w') as f:
         f.write(content)
 
 def main():
@@ -54,7 +51,9 @@ def main():
         content = get_page_content(path)
         save_page_content(path, content)
         print(f"Saved {path}")
-        time.sleep(random.randint(1, 10))
+        s = random.randint(1, 10)
+        print(f"sleeping {s}")
+        time.sleep(s)
 
 if __name__ == "__main__":
     main()
